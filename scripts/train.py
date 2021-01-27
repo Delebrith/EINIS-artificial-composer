@@ -49,7 +49,7 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
         epoch_g_loss = []
 
         batches = data_loader.get_number_of_batches(batch_size)
-        for b in range(batches):
+        for b in range(batches + 1):
             x_real, y_real = data_loader.get_batch(batch_num=b, batch_size=batch_size), np.ones(batch_size)
             d_loss_real, d_acc_real = discriminator.train_on_batch(x_real, y_real)
 
@@ -63,7 +63,8 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
             epoch_d_acc.append((d_acc_real + d_acc_fake) / 2)
             epoch_g_loss.append(g_loss)
             print("Batch %d of %d - d_loss: %f, d_acc: %f, g_loss: %f"
-                  % (b, batches, epoch_d_loss[-1], epoch_d_acc[-1], epoch_g_loss[-1]), end='\r')
+                  % (b, batches, epoch_d_loss[-1], epoch_d_acc[-1], epoch_g_loss[-1]),
+                  end=('\r' if b == batches else '\n'))
 
         gan.d_loss.append(sum(epoch_d_loss))
         gan.d_acc.append(sum(epoch_d_acc) / len(epoch_d_acc))
