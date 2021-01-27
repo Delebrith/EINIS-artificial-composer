@@ -1,0 +1,6 @@
+tensorflow
+tensorflow-gpu
+mido
+argparse
+keras
+matplotlib
