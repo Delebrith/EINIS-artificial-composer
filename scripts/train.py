@@ -35,9 +35,11 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
         logging.info('pretraining generator epoch %d of %d', e, pretrain_generator_epochs)
         data_loader.shuffle_samples()
         batches = data_loader.get_number_of_batches(batch_size)
-        for b in range(batches):
+        for b in range(batches + 1):
             x, y = np.random.randn(batch_size, gan.latent_dim), np.ones(batch_size)
             pre_g_loss = combined.train_on_batch(x, y)
+            print("Batch %d of %d - g_loss: %f" % (b, batches, pre_g_loss),
+                  end=('\r' if b != batches else '\n'))
         logging.info('pretraining loss: %f', pre_g_loss)
 
     for e in range(epochs):
@@ -64,7 +66,7 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
             epoch_g_loss.append(g_loss)
             print("Batch %d of %d - d_loss: %f, d_acc: %f, g_loss: %f"
                   % (b, batches, epoch_d_loss[-1], epoch_d_acc[-1], epoch_g_loss[-1]),
-                  end=('\r' if b == batches else '\n'))
+                  end=('\r' if b != batches else '\n'))
 
         gan.d_loss.append(sum(epoch_d_loss))
         gan.d_acc.append(sum(epoch_d_acc) / len(epoch_d_acc))
