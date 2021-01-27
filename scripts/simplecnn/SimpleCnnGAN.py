@@ -1,7 +1,7 @@
 from keras.layers import Dense, LeakyReLU, Reshape, Conv2DTranspose, Conv2D, Dropout, Flatten
 from keras.models import Sequential
 from mido import MidiFile, MidiTrack, Message
-from tensorflow.python.keras.optimizers import Adam
+from keras.optimizers import Adam
 from tensorflow.python.ops.init_ops import RandomNormal
 
 from scripts.DataLoader import DataLoader
