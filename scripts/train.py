@@ -42,6 +42,8 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
         for b in range(batches):
             x, y = np.random.randn(batch_size, gan.latent_dim), np.ones(batch_size)
             pre_g_loss = combined.train_on_batch(x, y)
+            print("Batch %d of %d - g_loss: %f" % (b, batches, pre_g_loss),
+                  end=('\r' if b != batches else '\n'))
         logging.info('pretraining loss: %f', pre_g_loss)
 
     for e in range(epochs):
