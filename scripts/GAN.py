@@ -34,7 +34,7 @@ class GAN:
         self.discriminator.save(
             path % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), 'discriminator', self.name, epoch))
 
-    def plot_progress(self):
+    def plot_progress(self, suffix=''):
         plt.plot(self.d_loss, c='red')
         plt.plot(self.g_loss, c='blue')
         plt.title("GAN Loss per Epoch")
@@ -42,7 +42,7 @@ class GAN:
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
         plt.ylim((0, max(max(self.g_loss), max(self.g_loss)) * 1.2))
-        plt.savefig('../plots/%s_GAN_Loss_per_Epoch_final.png' % self.name, transparent=True)
+        plt.savefig('../plots/%s_GAN_Loss_per_Epoch_%s.png' % (self.name, suffix), transparent=True)
         plt.close()
 
         plt.plot(self.d_acc)
@@ -51,5 +51,5 @@ class GAN:
         plt.xlabel('Epoch')
         plt.ylabel('Accuracy')
         plt.ylim((0, 1))
-        plt.savefig('../plots/%s_GAN_Accuracy_per_Epoch_final.png' % self.name, transparent=True)
+        plt.savefig('../plots/%s_GAN_Accuracy_per_Epoch_%s.png' % (self.name, suffix), transparent=True)
         plt.close()

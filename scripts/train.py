@@ -80,8 +80,9 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
         if e % sampling_rate == 0:
             gan.generate_sample(epoch=e)
             gan.save_models(e)
+            gan.plot_progress("epoch_%d" % e)
 
-    gan.plot_progress()
+    gan.plot_progress(suffix='final')
 
 
 def main():
