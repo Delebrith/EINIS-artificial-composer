@@ -5,6 +5,10 @@ import logging
 import tensorflow as tf
 
 from scripts.GAN import GAN
+from scripts.lstmdisc.MidiLstmGAN import MidiLSTMGan
+from scripts.lstmdisc.MidiToSequenceDataLoader import MidiToSequenceDataLoader
+from scripts.pianorolldcgan.PianoRollDCGAN import PianoRollDCGAN
+from scripts.pianorolldcgan.PianoRollDataLoader import PianoRollDataLoader
 from scripts.simplecnn.MidiToImgDataLoader import MidiToImgDataLoader
 from scripts.simplecnn.SimpleCnnGAN import SimpleCnnGAN
 from sys import exit
@@ -49,7 +53,7 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
         epoch_g_loss = []
 
         batches = data_loader.get_number_of_batches(batch_size)
-        for b in range(batches + 1):
+        for b in range(batches):
             x_real, y_real = data_loader.get_batch(batch_num=b, batch_size=batch_size), np.ones(batch_size)
             d_loss_real, d_acc_real = discriminator.train_on_batch(x_real, y_real)
 
@@ -64,7 +68,7 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
             epoch_g_loss.append(g_loss)
             print("Batch %d of %d - d_loss: %f, d_acc: %f, g_loss: %f"
                   % (b, batches, epoch_d_loss[-1], epoch_d_acc[-1], epoch_g_loss[-1]),
-                  end=('\r' if b == batches else '\n'))
+                  end=('\r' if b != batches-1 else '\n'))
 
         gan.d_loss.append(sum(epoch_d_loss))
         gan.d_acc.append(sum(epoch_d_acc) / len(epoch_d_acc))
@@ -95,14 +99,16 @@ def main():
 
     if gan_type == 'simple_cnn':
         logging.info("selected type %s", gan_type)
-        data_loader = MidiToImgDataLoader(features=128, path=dataset)
-        gan = SimpleCnnGAN(dataloader=data_loader, g_lr=0.0001, g_beta=0.9, d_lr=0.000001, d_beta=0.9)
+        dataloader = MidiToImgDataLoader(features=128, path=dataset)
+        gan = SimpleCnnGAN(dataloader=dataloader, g_lr=0.0001, g_beta=0.9, d_lr=0.000001, d_beta=0.9)
     elif gan_type == 'sequence_lstm':
         logging.info("selected type %s", gan_type)
-        gan = None
+        dataloader = MidiToSequenceDataLoader(features=128, path=dataset)
+        gan = MidiLSTMGan(dataloader=dataloader)
     elif gan_type == 'piano_roll_cnn':
         logging.info("selected type %s", gan_type)
-        gan = None
+        dataloader = PianoRollDataLoader(path=dataset, features=128)
+        gan = PianoRollDCGAN(dataloader=dataloader)
     else:
         gan = None
 

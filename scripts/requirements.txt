@@ -4,3 +4,4 @@ mido
 argparse
 keras
 matplotlib
+pypianoroll

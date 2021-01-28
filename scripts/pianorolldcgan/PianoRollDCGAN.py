@@ -1,20 +1,21 @@
+import datetime
+
+import numpy as np
+import pypianoroll
 from keras.layers import Dense, LeakyReLU, Reshape, Conv2DTranspose, Conv2D, Dropout, Flatten
 from keras.models import Sequential
-from mido import MidiFile, MidiTrack, Message
 from keras.optimizers import Adam
+from matplotlib import pyplot as plt
 from tensorflow.python.ops.init_ops import RandomNormal
 
 from scripts.DataLoader import DataLoader
 from scripts.GAN import GAN
 
-import numpy as np
-import datetime
 
-
-class SimpleCnnGAN(GAN):
-    def __init__(self, dataloader: DataLoader, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=256,
-                 content_shape=(128, 128, 1)):
-        GAN.__init__(self=self, data_generator=dataloader, name="simple-cnn-dcnn-GAN", latent_dim=latent_dim,
+class PianoRollDCGAN(GAN):
+    def __init__(self, dataloader: DataLoader, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=512,
+                 content_shape=(128, 128, 3)):
+        GAN.__init__(self=self, data_generator=dataloader, name="pianoroll-DC-GAN", latent_dim=latent_dim,
                      content_shape=content_shape)
         self.generator = self.build_generator()
         self.discriminator = self.build_discriminator(lr=d_lr, beta=d_beta)
@@ -48,10 +49,10 @@ class SimpleCnnGAN(GAN):
             Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
         model.add(LeakyReLU(alpha=0.2))
 
-        model.add(Conv2D(1, (7, 7), activation='sigmoid', padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(Conv2D(3, (7, 7), activation='sigmoid', padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
         return model
 
-    def build_discriminator(self, lr=0.001, beta=0.999):
+    def build_discriminator(self, lr=0.000001, beta=0.999):
         model = Sequential()
         model.add(Conv2D(128, (5, 5), strides=(2, 2), padding='same', input_shape=self.content_shape,
                          kernel_initializer=RandomNormal(stddev=0.5)))
@@ -74,7 +75,7 @@ class SimpleCnnGAN(GAN):
         model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
         return model
 
-    def combined_model(self, lr=0.001, beta=0.999):
+    def combined_model(self, lr=0.0001, beta=0.999):
         self.discriminator.trainable = False
         model = Sequential()
         model.add(self.generator)
@@ -84,18 +85,28 @@ class SimpleCnnGAN(GAN):
         return model
 
     def generate_sample(self, epoch):
-        path = "../samples/%s_%s_epoch_%d.mid" % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), self.name, epoch)
+        path = "../samples/%s_%s_epoch_%d" % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), self.name, epoch)
         generated = self.generator.predict(np.random.randn(1, self.latent_dim))
-        generated = generated.reshape(128, 128)
-        mid = MidiFile()
-        track = MidiTrack()
-        t = 0
-        for note in generated:
-            max_index = np.argmax(note)
-            msg = Message('note_on', note=max_index)
-            t = t + 1
-            msg.time = t
-            msg.velocity = 67
-            track.append(msg)
-        mid.tracks.append(track)
-        mid.save(path)
+        plt.imshow(generated.reshape(128, 128, 3))
+        plt.savefig("%s.png" % path)
+
+        generated = np.transpose(generated.reshape(128, 128, 3), axes=[1, 0, 2])
+
+        plt.imshow(generated)
+        plt.savefig("%s_transposed.png" % path)
+
+        drums = generated[:, :, 0]
+        piano1 = generated[:, :, 1]
+        piano2 = generated[:, :, 2]
+
+        track0 = pypianoroll.StandardTrack(name='drums', is_drum=True, pianoroll=drums, program=0)
+        track1 = pypianoroll.StandardTrack(name='piano1', is_drum=False, pianoroll=piano1)
+        track2 = pypianoroll.StandardTrack(name='piano2', is_drum=False, pianoroll=piano2)
+        multitrack = pypianoroll.Multitrack(
+            name='multitrack',
+            tracks=[track0, track1, track2],
+            tempo=np.asarray([[16.0] for _ in range(128)]),
+            resolution=24
+        )
+        multitrack.write(path=("%s.mid" % path))
+
