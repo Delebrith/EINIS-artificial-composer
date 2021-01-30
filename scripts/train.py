@@ -42,8 +42,8 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
         for b in range(batches):
             x, y = np.random.randn(batch_size, gan.latent_dim), np.ones(batch_size)
             pre_g_loss = combined.train_on_batch(x, y)
-            print("Batch %d of %d - g_loss: %f" % (b, batches, pre_g_loss),
-                  end=('\r' if b != batches else '\n'))
+            # print("Batch %d of %d - g_loss: %f" % (b, batches, pre_g_loss),
+            #       end=('\r' if b != batches else '\n'))
         logging.info('pretraining loss: %f', pre_g_loss)
 
     for e in range(epochs):
@@ -62,15 +62,17 @@ def train(gan: GAN, batch_size: int, epochs: int, pretrain_generator_epochs: int
             x_fake, y_fake = generator.predict(np.random.randn(batch_size, gan.latent_dim)), np.zeros(batch_size)
             d_loss_fake, d_acc_fake = discriminator.train_on_batch(x_fake, y_fake)
 
+            epoch_d_loss.append((d_loss_real + d_loss_fake) / 2)
+            epoch_d_acc.append((d_acc_real + d_acc_fake) / 2)
+
+        for b in range(batches):
             x_gan, y_gan = np.random.randn(batch_size, gan.latent_dim), np.ones(batch_size)
             g_loss = combined.train_on_batch(x_gan, y_gan)
 
-            epoch_d_loss.append((d_loss_real + d_loss_fake) / 2)
-            epoch_d_acc.append((d_acc_real + d_acc_fake) / 2)
             epoch_g_loss.append(g_loss)
-            print("Batch %d of %d - d_loss: %f, d_acc: %f, g_loss: %f"
-                  % (b, batches, epoch_d_loss[-1], epoch_d_acc[-1], epoch_g_loss[-1]),
-                  end=('\r' if b != batches-1 else '\n'))
+            # print("Batch %d of %d - d_loss: %f, d_acc: %f, g_loss: %f"
+            #       % (b, batches, epoch_d_loss[-1], epoch_d_acc[-1], epoch_g_loss[-1]),
+            #       end=('\r' if b != batches-1 else '\n'))
 
         gan.d_loss.append(sum(epoch_d_loss))
         gan.d_acc.append(sum(epoch_d_acc) / len(epoch_d_acc))
@@ -103,7 +105,7 @@ def main():
     if gan_type == 'simple_cnn':
         logging.info("selected type %s", gan_type)
         dataloader = MidiToImgDataLoader(features=128, path=dataset)
-        gan = SimpleCnnGAN(dataloader=dataloader, g_lr=0.0001, g_beta=0.9, d_lr=0.000001, d_beta=0.9)
+        gan = SimpleCnnGAN(dataloader=dataloader, g_lr=0.00001, g_beta=0.5, d_lr=0.000001, d_beta=0.5)
     elif gan_type == 'sequence_lstm':
         logging.info("selected type %s", gan_type)
         dataloader = MidiToSequenceDataLoader(features=128, path=dataset)
@@ -111,7 +113,7 @@ def main():
     elif gan_type == 'piano_roll_cnn':
         logging.info("selected type %s", gan_type)
         dataloader = PianoRollDataLoader(path=dataset, features=128)
-        gan = PianoRollDCGAN(dataloader=dataloader)
+        gan = PianoRollDCGAN(dataloader=dataloader, d_lr=0.00002, g_lr=0.0005, g_beta=0.6, d_beta=0.6)
     else:
         gan = None
 

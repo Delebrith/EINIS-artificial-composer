@@ -2,7 +2,7 @@ import datetime
 
 import numpy as np
 import pypianoroll
-from keras.layers import Dense, LeakyReLU, Reshape, Conv2DTranspose, Conv2D, Dropout, Flatten
+from keras.layers import Dense, LeakyReLU, Reshape, Conv2DTranspose, Conv2D, Dropout, Flatten, BatchNormalization
 from keras.models import Sequential
 from keras.optimizers import Adam
 from matplotlib import pyplot as plt
@@ -13,7 +13,7 @@ from scripts.GAN import GAN
 
 
 class PianoRollDCGAN(GAN):
-    def __init__(self, dataloader: DataLoader, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=512,
+    def __init__(self, dataloader: DataLoader, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=1024,
                  content_shape=(128, 128, 3)):
         GAN.__init__(self=self, data_generator=dataloader, name="pianoroll-DC-GAN", latent_dim=latent_dim,
                      content_shape=content_shape)
@@ -32,21 +32,25 @@ class PianoRollDCGAN(GAN):
         # upsample to 16X16
         model.add(
             Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
 
         # upsample to 32x32
         model.add(
             Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
 
         # upsample to 64x64
         model.add(
             Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
 
         # upsample to 128x128
         model.add(
             Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
 
         model.add(Conv2D(3, (7, 7), activation='sigmoid', padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
@@ -56,16 +60,20 @@ class PianoRollDCGAN(GAN):
         model = Sequential()
         model.add(Conv2D(128, (5, 5), strides=(2, 2), padding='same', input_shape=self.content_shape,
                          kernel_initializer=RandomNormal(stddev=0.5)))
+        # model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.4))
+
+        model.add(Conv2D(128, (5, 5), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        # model.add(BatchNormalization(momentum=0.8))
+        model.add(LeakyReLU(alpha=0.2))
 
         model.add(Conv2D(64, (3, 3), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        # model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.4))
 
         model.add(Conv2D(32, (3, 3), strides=(2, 2), padding='same', kernel_initializer=RandomNormal(stddev=0.5)))
+        # model.add(BatchNormalization(momentum=0.8))
         model.add(LeakyReLU(alpha=0.2))
-        model.add(Dropout(0.4))
 
         model.add(Flatten())
         model.add(Dense(1, activation='sigmoid', kernel_initializer=RandomNormal(stddev=0.5)))
@@ -87,25 +95,24 @@ class PianoRollDCGAN(GAN):
     def generate_sample(self, epoch):
         path = "../samples/%s_%s_epoch_%d" % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), self.name, epoch)
         generated = self.generator.predict(np.random.randn(1, self.latent_dim))
-        plt.imshow(generated.reshape(128, 128, 3))
-        plt.savefig("%s.png" % path)
-
-        generated = np.transpose(generated.reshape(128, 128, 3), axes=[1, 0, 2])
-
+        generated = generated.reshape(128, 128, 3)
         plt.imshow(generated)
-        plt.savefig("%s_transposed.png" % path)
+        plt.savefig("%s.png" % path)
+        plt.close()
+
+        generated *= 128.0 / generated.max()
 
         drums = generated[:, :, 0]
-        piano1 = generated[:, :, 1]
-        piano2 = generated[:, :, 2]
+        melody1 = generated[:, :, 1]
+        melody2 = generated[:, :, 2]
 
         track0 = pypianoroll.StandardTrack(name='drums', is_drum=True, pianoroll=drums, program=0)
-        track1 = pypianoroll.StandardTrack(name='piano1', is_drum=False, pianoroll=piano1)
-        track2 = pypianoroll.StandardTrack(name='piano2', is_drum=False, pianoroll=piano2)
+        track1 = pypianoroll.StandardTrack(name='piano1', is_drum=False, pianoroll=melody1, program=0)
+        track2 = pypianoroll.StandardTrack(name='piano2', is_drum=False, pianoroll=melody2, program=52)
         multitrack = pypianoroll.Multitrack(
             name='multitrack',
             tracks=[track0, track1, track2],
-            tempo=np.asarray([[16.0] for _ in range(128)]),
+            tempo=np.asarray([[8.0] for _ in range(128)]),
             resolution=24
         )
         multitrack.write(path=("%s.mid" % path))

@@ -2,6 +2,9 @@ import datetime
 from matplotlib import pyplot as plt
 
 
+plt.rcParams["figure.figsize"] = (10, 10)
+
+
 class GAN:
     def __init__(self, latent_dim=100, content_shape=(128, 128, 1), data_generator=None, name='GAN'):
         self.name = name
@@ -35,14 +38,15 @@ class GAN:
             path % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), 'discriminator', self.name, epoch))
 
     def plot_progress(self, suffix=''):
+        timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+
         plt.plot(self.d_loss, c='red')
         plt.plot(self.g_loss, c='blue')
         plt.title("GAN Loss per Epoch")
         plt.legend(['Discriminator', 'Generator'])
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
-        plt.ylim((0, max(max(self.g_loss), max(self.g_loss)) * 1.2))
-        plt.savefig('../plots/%s_GAN_Loss_per_Epoch_%s.png' % (self.name, suffix), transparent=True)
+        plt.savefig('../plots/%s_%s_GAN_Loss_per_Epoch_%s.png' % (timestamp, self.name, suffix), transparent=True)
         plt.close()
 
         plt.plot(self.d_acc)
@@ -51,5 +55,5 @@ class GAN:
         plt.xlabel('Epoch')
         plt.ylabel('Accuracy')
         plt.ylim((0, 1))
-        plt.savefig('../plots/%s_GAN_Accuracy_per_Epoch_%s.png' % (self.name, suffix), transparent=True)
+        plt.savefig('../plots/%s_%s_GAN_Accuracy_per_Epoch_%s.png' % (timestamp, self.name, suffix), transparent=True)
         plt.close()
