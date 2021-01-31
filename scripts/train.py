@@ -112,7 +112,7 @@ def main():
         gan = MidiLSTMGan(dataloader=dataloader)
     elif gan_type == 'piano_roll_cnn':
         logging.info("selected type %s", gan_type)
-        dataloader = PianoRollDataLoader(path=dataset, features=128)
+        dataloader = PianoRollDataLoader(path=dataset, features=128, augmentation=True)
         gan = PianoRollDCGAN(dataloader=dataloader, d_lr=0.00002, g_lr=0.0005, g_beta=0.6, d_beta=0.6)
     else:
         gan = None

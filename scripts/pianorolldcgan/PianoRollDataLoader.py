@@ -8,7 +8,8 @@ import numpy as np
 
 
 class PianoRollDataLoader(DataLoader):
-    def __init__(self, path, features):
+    def __init__(self, path, features, augmentation=False):
+        self.augmentation = augmentation
         DataLoader.__init__(self, path=path, features=features)
 
     def get_batch(self, batch_num: int, batch_size: int):
@@ -21,12 +22,23 @@ class PianoRollDataLoader(DataLoader):
         try:
             logging.info("Reading %s" % filename)
             notes = self.read_notes(os.path.join(self._path, filename))
-            num_of_fragments = int(len(notes) / self.features)
-            fragments = [
-                notes[self.features * (i - 1):self.features * i]
-                for i in range(1, num_of_fragments)
-            ]
-            self.data = self.data + fragments
+            if self.augmentation is False:
+                num_of_fragments = int(len(notes) / self.features)
+                fragments = [
+                    notes[self.features * (i - 1):self.features * i]
+                    for i in range(1, num_of_fragments)
+                ]
+                self.data = self.data + fragments
+            else:
+                fragments = []
+                start = 0
+                end = self.features
+                while end < len(notes):
+                    fragments.append(notes[start:end])
+                    start += 8
+                    end += 8
+
+                self.data = self.data + fragments
         except:
             print('Error reading {}'.format(os.path.join(self._path, filename)))
             return None
