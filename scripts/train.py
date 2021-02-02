@@ -9,6 +9,8 @@ from scripts.lstmdisc.MidiLstmGAN import MidiLSTMGan
 from scripts.lstmdisc.MidiToSequenceDataLoader import MidiToSequenceDataLoader
 from scripts.pianorolldcgan.PianoRollDCGAN import PianoRollDCGAN
 from scripts.pianorolldcgan.PianoRollDataLoader import PianoRollDataLoader
+from scripts.pianorolldcgan.PianoRoll1DDataLoader import PianoRoll1DDataLoader
+from scripts.pianorolldcgan.PianoRollLstmGAN import PianoRollLstmGAN
 from scripts.simplecnn.MidiToImgDataLoader import MidiToImgDataLoader
 from scripts.simplecnn.SimpleCnnGAN import SimpleCnnGAN
 from sys import exit
@@ -93,8 +95,6 @@ def main():
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--pretraining_epochs', type=int, default=5)
     parser.add_argument('--sampling_rate', type=int, default=10)
-    parser.add_argument('--load_generator_path', type=str, default=None)
-    parser.add_argument('--load_discriminator_path', type=str, default=None)
     parser.add_argument('--gan_type', type=str, default='simple_cnn')
     parser.add_argument('--dataset', type=str, default='../../project/data/maestro-v2.0.0-midi/2018')
     args = parser.parse_args()
@@ -114,6 +114,10 @@ def main():
         logging.info("selected type %s", gan_type)
         dataloader = PianoRollDataLoader(path=dataset, features=128, augmentation=True)
         gan = PianoRollDCGAN(dataloader=dataloader, d_lr=0.00002, g_lr=0.0005, g_beta=0.6, d_beta=0.6)
+    elif gan_type == 'piano_roll_lstm':
+        logging.info("selected type %s", gan_type)
+        dataloader = PianoRoll1DDataLoader(path=dataset, features=128, augmentation=True)
+        gan = PianoRollLstmGAN(dataloader=dataloader, d_lr=0.00002, g_lr=0.0005, g_beta=0.6, d_beta=0.6)
     else:
         gan = None
 
