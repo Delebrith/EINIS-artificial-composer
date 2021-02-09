@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.4.14)  9 FEB 2021 16:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/W32TeX) (preloaded format=pdflatex 2019.4.14)  9 FEB 2021 16:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -267,14 +267,48 @@ Overfull \hbox (6.4371pt too wide) in paragraph at lines 201--206
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<img/2021_01_31_22_56_39_pianoroll-DC-GAN_epoch_5900.png, id=30, 722.7pt x 722.
+<img/2021_01_28_22_56_58_pianoroll-DC-GAN_epoch_0.png, id=30, 722.7pt x 722.7pt
+>
+File: img/2021_01_28_22_56_58_pianoroll-DC-GAN_epoch_0.png Graphic file (type p
+ng)
+<use img/2021_01_28_22_56_58_pianoroll-DC-GAN_epoch_0.png>
+Package pdftex.def Info: img/2021_01_28_22_56_58_pianoroll-DC-GAN_epoch_0.png  
+used on input line 216.
+(pdftex.def)             Requested size: 169.0519pt x 169.05156pt.
+<img/2021_01_28_22_58_42_pianoroll-DC-GAN_epoch_100.png, id=31, 722.7pt x 722.7
+pt>
+File: img/2021_01_28_22_58_42_pianoroll-DC-GAN_epoch_100.png Graphic file (type
+ png)
+<use img/2021_01_28_22_58_42_pianoroll-DC-GAN_epoch_100.png>
+Package pdftex.def Info: img/2021_01_28_22_58_42_pianoroll-DC-GAN_epoch_100.png
+  used on input line 219.
+(pdftex.def)             Requested size: 169.0519pt x 169.05156pt.
+<img/2021_01_29_00_00_12_pianoroll-DC-GAN_epoch_3600.png, id=32, 722.7pt x 722.
 7pt>
-File: img/2021_01_31_22_56_39_pianoroll-DC-GAN_epoch_5900.png Graphic file (typ
+File: img/2021_01_29_00_00_12_pianoroll-DC-GAN_epoch_3600.png Graphic file (typ
 e png)
-<use img/2021_01_31_22_56_39_pianoroll-DC-GAN_epoch_5900.png>
-Package pdftex.def Info: img/2021_01_31_22_56_39_pianoroll-DC-GAN_epoch_5900.pn
-g  used on input line 214.
-(pdftex.def)             Requested size: 238.05084pt x 238.05063pt.
+<use img/2021_01_29_00_00_12_pianoroll-DC-GAN_epoch_3600.png>
+Package pdftex.def Info: img/2021_01_29_00_00_12_pianoroll-DC-GAN_epoch_3600.pn
+g  used on input line 223.
+(pdftex.def)             Requested size: 169.0519pt x 169.05156pt.
+<img/2021_01_29_07_06_39_pianoroll-DC-GAN_epoch_28800.png, id=33, 722.7pt x 722
+.7pt>
+File: img/2021_01_29_07_06_39_pianoroll-DC-GAN_epoch_28800.png Graphic file (ty
+pe png)
+<use img/2021_01_29_07_06_39_pianoroll-DC-GAN_epoch_28800.png>
+Package pdftex.def Info: img/2021_01_29_07_06_39_pianoroll-DC-GAN_epoch_28800.p
+ng  used on input line 226.
+(pdftex.def)             Requested size: 169.0519pt x 169.05156pt.
+
+Overfull \hbox (6.4371pt too wide) in paragraph at lines 216--227
+ [][][] 
+ []
+
+
+Overfull \hbox (6.4371pt too wide) in paragraph at lines 216--227
+ [][] 
+ []
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -282,29 +316,32 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 ch_120.png> <./img/2021_02_08_21_47_26_midi-notes-lstm-gan-scalec_GAN_Accuracy_
 per_Epoch_epoch_120.png>] [6] [7 <./img/2021_01_31_22_56_40_pianoroll-DC-GAN_GA
 N_Loss_per_Epoch_epoch_5900.png> <./img/2021_01_31_22_56_40_pianoroll-DC-GAN_GA
-N_Accuracy_per_Epoch_epoch_5900.png> <./img/2021_01_31_22_56_39_pianoroll-DC-GA
-N_epoch_5900.png>]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 230.
+N_Accuracy_per_Epoch_epoch_5900.png>] [8 <./img/2021_01_28_22_56_58_pianoroll-D
+C-GAN_epoch_0.png> <./img/2021_01_28_22_58_42_pianoroll-DC-GAN_epoch_100.png> <
+./img/2021_01_29_00_00_12_pianoroll-DC-GAN_epoch_3600.png> <./img/2021_01_29_07
+_06_39_pianoroll-DC-GAN_epoch_28800.png>]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 243.
 
- (c:/texlive/2018/texmf-dist/tex/latex/base/omscmr.fd
+
+(c:/texlive/2018/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 230.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 243.
 
-Overfull \hbox (10.11179pt too wide) in paragraph at lines 238--239
+Overfull \hbox (10.11179pt too wide) in paragraph at lines 251--252
 []\OT1/cmr/m/n/10 Instructions for both train-ing and gen-er-a-tion scripts can
  be found in readme.md
  []
 
-(./report.bbl) [8
+(./report.bbl) [9
 
 ] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 2774 strings out of 492616
- 46003 string characters out of 6132768
+ 2789 strings out of 492616
+ 46858 string characters out of 6132768
  120740 words of memory out of 5000000
- 6669 multiletter control sequences out of 15000+600000
+ 6681 multiletter control sequences out of 15000+600000
  8410 words of font info for 30 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  44i,9n,49p,513b,350s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -316,10 +353,10 @@ mf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/texlive/2018/texmf-dist/fo
 nts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2018/texmf-dist/fonts/type1/p
 ublic/amsfonts/cm/cmsy10.pfb><c:/texlive/2018/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmti10.pfb>
-Output written on report.pdf (8 pages, 317041 bytes).
+Output written on report.pdf (9 pages, 461840 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
- 45 compressed objects within 1 object stream
+ 87 PDF objects out of 1000 (max. 8388607)
+ 47 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 36 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 51 words of extra memory for PDF output out of 10000 (max. 10000000)
 
