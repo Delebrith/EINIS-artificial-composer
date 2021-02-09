@@ -30,6 +30,9 @@ class GAN:
     def generate_sample(self, epoch):
         raise NotImplemented
 
+    def generate_sample_to(self, path):
+        raise NotImplemented
+
     def save_models(self, epoch):
         path = "../models/%s_%s_%s_epoch_%d.hdf5"
         self.generator.save(

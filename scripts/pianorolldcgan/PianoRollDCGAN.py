@@ -13,7 +13,7 @@ from scripts.GAN import GAN
 
 
 class PianoRollDCGAN(GAN):
-    def __init__(self, dataloader: DataLoader, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=1024,
+    def __init__(self, dataloader: DataLoader = None, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=1024,
                  content_shape=(128, 128, 3)):
         GAN.__init__(self=self, data_generator=dataloader, name="pianoroll-DC-GAN", latent_dim=latent_dim,
                      content_shape=content_shape)
@@ -94,6 +94,9 @@ class PianoRollDCGAN(GAN):
 
     def generate_sample(self, epoch):
         path = "../samples/%s_%s_epoch_%d" % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), self.name, epoch)
+        self.generate_sample_to(path=path)
+
+    def generate_sample_to(self, path):
         generated = self.generator.predict(np.random.randn(1, self.latent_dim))
         generated = generated.reshape(128, 128, 3)
         plt.imshow(generated)
@@ -101,6 +104,8 @@ class PianoRollDCGAN(GAN):
         plt.close()
 
         generated *= 128.0 / generated.max()
+        generated = generated.astype('int32')
+        generated = generated.astype('float64')
 
         drums = generated[:, :, 0]
         melody1 = generated[:, :, 1]

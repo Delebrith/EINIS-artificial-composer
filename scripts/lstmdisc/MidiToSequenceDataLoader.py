@@ -14,7 +14,8 @@ class MidiToSequenceDataLoader(DataLoader):
 
     def get_batch(self, batch_num: int, batch_size: int):
         batch = np.array(self.data[batch_num * batch_size:(batch_num + 1) * batch_size])
-        return batch.reshape(batch_size, 1, self.features)
+        batch = batch.reshape(batch_size, 1, self.features)
+        return batch
 
     def read_one_file(self, filename):
         try:
@@ -34,7 +35,9 @@ class MidiToSequenceDataLoader(DataLoader):
             if not msg.is_meta and msg.channel == 0 and msg.type == 'note_on':
                 data = msg.bytes()
                 notes.append(data[1])
-        return np.array(notes)
+        notes = np.array(notes, dtype='float64')
+        notes *= 1.0 / 127.0
+        return notes
 
     def get_number_of_batches(self, batch_size: int):
         return int(len(self.data) / batch_size)

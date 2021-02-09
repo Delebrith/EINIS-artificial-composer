@@ -13,8 +13,8 @@ from scripts.GAN import GAN
 
 
 class MidiLSTMGan(GAN):
-    def __init__(self, dataloader: DataLoader, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=128):
-        GAN.__init__(self=self, latent_dim=latent_dim, data_generator=dataloader, name="midi-notes-lstm-gan")
+    def __init__(self, dataloader: DataLoader = None, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=512):
+        GAN.__init__(self=self, latent_dim=latent_dim, data_generator=dataloader, name="midi-notes-lstm-gan-scalec")
         self.data_loader = dataloader
         self.seq_length = dataloader.features
         self.seq_shape = (1, self.seq_length)
@@ -25,8 +25,12 @@ class MidiLSTMGan(GAN):
     def build_discriminator(self, lr=0.01, beta=0.9):
         model = Sequential()
         model.add(
-            LSTM(256, input_shape=self.seq_shape, return_sequences=True, kernel_initializer=RandomNormal(stddev=0.5)))
-        model.add(Bidirectional(LSTM(256, kernel_initializer=RandomNormal(stddev=0.5))))
+            LSTM(128, input_shape=self.seq_shape, return_sequences=True, kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(Bidirectional(LSTM(512, kernel_initializer=RandomNormal(stddev=0.5))))
+
+        model.add(Dense(256, kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(LeakyReLU(alpha=0.2))
+        model.add(BatchNormalization(momentum=0.8))
 
         model.add(Dense(128, kernel_initializer=RandomNormal(stddev=0.5)))
         model.add(LeakyReLU(alpha=0.2))
@@ -60,7 +64,7 @@ class MidiLSTMGan(GAN):
         model.add(LeakyReLU(alpha=0.2))
         model.add(BatchNormalization(momentum=0.8))
 
-        model.add(Dense(np.prod(self.seq_shape), activation='relu', kernel_initializer=RandomNormal(stddev=0.5)))
+        model.add(Dense(np.prod(self.seq_shape), activation='sigmoid', kernel_initializer=RandomNormal(stddev=0.5)))
         model.add(Reshape(self.seq_shape))
         model.summary()
 
@@ -81,16 +85,20 @@ class MidiLSTMGan(GAN):
     def generate_sample(self, epoch):
         path = "../samples/%s_%s_epoch_%d.mid" \
                % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), self.name, epoch)
+        self.generate_sample_to(path=path)
+
+    def generate_sample_to(self, path):
         generated = self.generator.predict(np.random.randn(1, self.latent_dim))
         generated = generated.reshape(self.data_loader.features)
         mid = MidiFile()
         track = MidiTrack()
         t = 0
         for note in generated:
-            msg = Message('note_on', note=int(max(0, min(127, note))))
+            note = int(127.0 * note)
+            msg = Message('note_on', note=note)
             t = t + 1
             msg.time = t
-            msg.velocity = 67
+            msg.velocity = 32
             track.append(msg)
         mid.tracks.append(track)
         mid.save(path)

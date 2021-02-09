@@ -109,11 +109,12 @@ def main():
     elif gan_type == 'sequence_lstm':
         logging.info("selected type %s", gan_type)
         dataloader = MidiToSequenceDataLoader(features=128, path=dataset)
-        gan = MidiLSTMGan(dataloader=dataloader)
+        # gan = MidiLSTMGan(dataloader=dataloader, d_lr=0.0005, g_lr=0.00001, g_beta=0.6, d_beta=0.9)
+        gan = MidiLSTMGan(dataloader=dataloader, d_lr=0.0005, g_lr=0.000005, g_beta=0.9, d_beta=0.9)
     elif gan_type == 'piano_roll_cnn':
         logging.info("selected type %s", gan_type)
         dataloader = PianoRollDataLoader(path=dataset, features=128, augmentation=True)
-        gan = PianoRollDCGAN(dataloader=dataloader, d_lr=0.00002, g_lr=0.0005, g_beta=0.6, d_beta=0.6)
+        gan = PianoRollDCGAN(dataloader=dataloader, d_lr=0.0001, g_lr=0.0002, g_beta=0.6, d_beta=0.6)
     else:
         gan = None
 

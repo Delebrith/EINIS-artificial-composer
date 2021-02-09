@@ -12,7 +12,7 @@ import datetime
 
 
 class SimpleCnnGAN(GAN):
-    def __init__(self, dataloader: DataLoader, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=256,
+    def __init__(self, dataloader: DataLoader = None, g_lr=0.001, g_beta=0.999, d_lr=0.001, d_beta=0.999, latent_dim=256,
                  content_shape=(128, 128, 1)):
         GAN.__init__(self=self, data_generator=dataloader, name="simple-cnn-dcnn-GAN", latent_dim=latent_dim,
                      content_shape=content_shape)
@@ -85,6 +85,9 @@ class SimpleCnnGAN(GAN):
 
     def generate_sample(self, epoch):
         path = "../samples/%s_%s_epoch_%d.mid" % (datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S"), self.name, epoch)
+        self.generate_sample_to(path=path)
+
+    def generate_sample_to(self, path):
         generated = self.generator.predict(np.random.randn(1, self.latent_dim))
         generated = generated.reshape(128, 128)
         mid = MidiFile()

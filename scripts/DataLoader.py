@@ -8,7 +8,8 @@ class DataLoader:
         self._path = path
         self.features = features
         self.data = []
-        self.read_data()
+        if self._path is not None:
+            self.read_data()
 
     def read_data(self):
         [self.read_one_file(file) for file in os.listdir(self._path)]
