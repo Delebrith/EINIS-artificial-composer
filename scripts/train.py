@@ -93,8 +93,6 @@ def main():
     parser.add_argument('--batch_size', type=int, default=8)
     parser.add_argument('--pretraining_epochs', type=int, default=5)
     parser.add_argument('--sampling_rate', type=int, default=10)
-    parser.add_argument('--load_generator_path', type=str, default=None)
-    parser.add_argument('--load_discriminator_path', type=str, default=None)
     parser.add_argument('--gan_type', type=str, default='simple_cnn')
     parser.add_argument('--dataset', type=str, default='../../project/data/maestro-v2.0.0-midi/2018')
     args = parser.parse_args()
