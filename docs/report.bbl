@@ -1,0 +1,17 @@
+\begin{thebibliography}{1}
+
+\bibitem{queenmidisongs}
+Queen - royal legend - audio archive: Queen midi, 2021.
+
+\bibitem{hawthorne2018enabling}
+Curtis Hawthorne, Andriy Stasyuk, Adam Roberts, Ian Simon, Cheng-Zhi~Anna
+  Huang, Sander Dieleman, Erich Elsen, Jesse Engel, and Douglas Eck.
+\newblock Enabling factorized piano music modeling and generation with the
+  {MAESTRO} dataset.
+\newblock In {\em International Conference on Learning Representations}, 2019.
+
+\bibitem{dcgan}
+Nathan Inkawhich.
+\newblock Dcgan tutorial, 2021.
+
+\end{thebibliography}
