@@ -23,4 +23,4 @@ architecture type and pass path to models weights (.h5 file) and to output file.
 
 Example:
 
-```--gan_type piano_roll_cnn --output_path ../samples/outpianoroll.midi --load_generator_path ../models/2021_01_31_22_56_40_generator_pianoroll-DC-GAN_epoch_5900.hdf5```
+```python generate.py --gan_type piano_roll_cnn --output_path ../samples/outpianoroll.midi --load_generator_path ../models/2021_01_31_22_56_40_generator_pianoroll-DC-GAN_epoch_5900.hdf5```
